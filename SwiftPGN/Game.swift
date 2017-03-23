@@ -26,16 +26,8 @@ class Game {
     var result: String?
     
     init(withPGNString pgnString: String) {
-        let nsString = pgnString as NSString
+        let matches = try! pgnString.findMatches(withPattern: self.kMetaPattern)
         
-        let regularExpression = try! NSRegularExpression(pattern: self.kMetaPattern, options: [])
-        
-        let range = NSMakeRange(0, nsString.length)
-        let result = regularExpression.matches(in: pgnString, options: [], range: range)
-        
-        let matches = result.map { nsString.substring(with: $0.range) }
-        
-        print("==========")
         for match in matches {
             if let (key, value) = self.loadMeta(fromMetaString: match) {
                 self.set(value: value, forMetaKey: key)
@@ -44,15 +36,8 @@ class Game {
     }
     
     private func loadMeta(fromMetaString string: String) -> (String, String)? {
-        let nsString = string as NSString
-        
-        func loadKey(fromString string: NSString) -> String? {
-            let regularExpression = try! NSRegularExpression(pattern: self.kMetaKeyPattern, options: [])
-            
-            let range = NSMakeRange(0, string.length)
-            let result = regularExpression.matches(in: string as String, options: [], range: range)
-            
-            let matches = result.map { string.substring(with: $0.range) }
+        func loadKey(fromString string: String) -> String? {
+            let matches = try! string.findMatches(withPattern: self.kMetaKeyPattern)
             
             if let match = matches.first {
                 return match.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: " ", with: "")
@@ -61,13 +46,8 @@ class Game {
             return nil
         }
         
-        func loadValue(fromString string: NSString) -> String? {
-            let regularExpression = try! NSRegularExpression(pattern: self.kMetaValuePattern, options: [])
-            
-            let range = NSMakeRange(0, string.length)
-            let result = regularExpression.matches(in: string as String, options: [], range: range)
-            
-            let matches = result.map { string.substring(with: $0.range) }
+        func loadValue(fromString string: String) -> String? {
+            let matches = try! string.findMatches(withPattern: self.kMetaValuePattern)
             
             if let match = matches.first {
                 return match.replacingOccurrences(of: "\"", with: "")
@@ -76,8 +56,8 @@ class Game {
             return nil
         }
         
-        if let key = loadKey(fromString: nsString) {
-            if let value = loadValue(fromString: nsString) {
+        if let key = loadKey(fromString: string) {
+            if let value = loadValue(fromString: string) {
                 return (key, value)
             }
         }
