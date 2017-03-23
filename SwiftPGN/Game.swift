@@ -9,11 +9,29 @@
 import Foundation
 
 
+enum Figure {
+    case king, queen, rook, bishop, knight, pawn
+}
+
+struct PositionedFigure {
+    var figure: Figure
+    var position: (String, Int)
+}
+
+struct Move {
+    var white: PositionedFigure
+    var black: PositionedFigure
+}
+
+
 class Game {
     
     private let kMetaPattern = "\\[.+\\]"
     private let kMetaKeyPattern = "\\[[a-zA-Z]+(\\s|\\t)?"
     private let kMetaValuePattern = "\".+\""
+    
+    private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]+\\s[a-zA-Z0-9]+(\\s)" // 1. e4 e5
+    private let kPositionedFigurePattern = "[KQRBN]?[a-h]?x?[a-h][1-8]" // Rxf7
 
     var event: String?
     var site: String?
@@ -25,7 +43,20 @@ class Game {
     var ECO: String?
     var result: String?
     
+    var moves: [Move] = []
+    
+    //
+    // MARK: Initialization
+    
     init(withPGNString pgnString: String) {
+        self.parseMeta(fromPGNGameString: pgnString)
+        self.parseMoves(fromPGNGameString: pgnString)
+    }
+    
+    //
+    // MARK: Meta parsing
+    
+    private func parseMeta(fromPGNGameString pgnString: String) {
         let matches = try! pgnString.findMatches(withPattern: self.kMetaPattern)
         
         for match in matches {
@@ -88,6 +119,45 @@ class Game {
         default:
             break
         }
+    }
+    
+    //
+    // MARK: Moves parsing
+    
+    private func parseMoves(fromPGNGameString pgnString: String) {
+        for match in try! pgnString.findMatches(withPattern: self.kMovePattern) {
+            if let move = self.parseMove(fromString: match) {
+                self.moves.append(move)
+            }
+        }
+    }
+    
+    private func parseMove(fromString moveString: String) -> Move? {
+        var white: PositionedFigure?
+        var black: PositionedFigure?
+        
+        for (i, match) in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern).enumerated() {
+            if match.lengthOfBytes(using: .utf8) >= 2 {
+                var step = match.replacingOccurrences(of: "\n", with: "")
+                if let horizontal = Int(String(step.characters.popLast()!)) {
+                    let vertical = String(step.characters.popLast()!)
+                    
+                    // TODO: Figure parsing
+                    var movedFigure = PositionedFigure(figure: .pawn, position: (vertical, horizontal))
+                    if i == 0 {
+                        white = movedFigure
+                    } else if i == 1 {
+                        black = movedFigure
+                    }
+                }
+            }
+        }
+        
+        if let white = white, let black = black {
+            return Move(white: white, black: black)
+        }
+        
+        return nil
     }
     
 }
