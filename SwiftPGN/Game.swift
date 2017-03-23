@@ -31,7 +31,7 @@ class Game {
     private let kMetaValuePattern = "\".+\""
     
     private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]+\\s[a-zA-Z0-9]+(\\s)" // 1. e4 e5
-    private let kPositionedFigurePattern = "[KQRBN]?[a-h]?x?[a-h][1-8]" // Rxf7
+    private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]" // Rxf7
 
     var event: String?
     var site: String?
@@ -51,7 +51,6 @@ class Game {
     init(withPGNString pgnString: String) {
         self.parseMeta(fromPGNGameString: pgnString)
         self.parseMoves(fromPGNGameString: pgnString)
-        print("LOL")
     }
     
     //
@@ -134,6 +133,12 @@ class Game {
     }
     
     private func parseMove(fromString moveString: String) -> Move? {
+        // TODO: Parse source coordinates
+        // TODO: PArse O-O
+        // TODO: Comments support
+        // TODO: + support
+        // TODO: Final move parsing
+        
         var positionedFigures: [PositionedFigure] = []
         
         for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {

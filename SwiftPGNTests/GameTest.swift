@@ -11,40 +11,48 @@ import XCTest
 
 
 class GameTest: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
+    private let kTestFilePath = "/Users/alexkrzyzanowski/Projects/SwiftPGN/SwiftPGNTests/one_game.pgn"
     
-    func testGameLoading() {
-        let testPGNString = "[Event \"IBM Kasparov vs. Deep Blue Rematch\"]\n" +
-        "[Site \"New York, NY USA\"]\n" +
-        "[Date \"1997.05.11\"]\n" +
-        "[Round \"6\"]\n" +
-        "[White \"Deep Blue\"]\n" +
-        "[Black \"Kasparov, Garry\"]\n" +
-        "[Opening \"Caro-Kann: 4...Nd7\"]\n" +
-        "[ECO \"B17\"]\n" +
-        "[Result \"1-0\"]\n" +
-        "\n" +
-        "1.e4 c6 2.d4 d5 3.Nc3 dxe4 4.Nxe4 Nd7 5.Ng5 Ngf6 6.Bd3 e6 7.N1f3 h6" +
-        "8.Nxe6 Qe7 9.O-O fxe6 10.Bg6+ Kd8 {Каспаров встряхнул головой}" +
-        "11.Bf4 b5 12.a4 Bb7 13.Re1 Nd5 14.Bg3 Kc8 15.axb5 cxb5 16.Qd3 Bc6" +
-        "17.Bf5 exf5 18.Rxe7 Bxe7 19.c4 1-0"
+    
+    func testMovesLoading() {
+        let fileContent = try! String(contentsOfFile: self.kTestFilePath)
+        let pgnFile = PGNFile(string: fileContent)
+        let game: Game! = pgnFile.gameList.first
+        XCTAssertNotNil(game)
         
-        let game = Game(withPGNString: testPGNString)
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        let moves = [
+            [(Figure.pawn, "e", 4), (Figure.pawn, "c", 6)],
+            [(Figure.pawn, "d", 4), (Figure.pawn, "d", 5)],
+            [(Figure.knight, "c", 3), (Figure.pawn, "e", 4)],
+            [(Figure.knight, "e", 4), (Figure.knight, "d", 7)],
+            [(Figure.knight, "g", 5), (Figure.knight, "f", 6)],
+            [(Figure.bishop, "d", 3), (Figure.pawn, "e", 6)],
+            [(Figure.knight, "f", 3), (Figure.pawn, "h", 6)],
+            [(Figure.knight, "e", 6), (Figure.queen, "e", 7)],
+            // 9.O-O fxe6
+            //10.Bg6+ Kd8 {Каспаров встряхнул головой}
+            [(Figure.bishop, "f", 4), (Figure.pawn, "b", 5)],
+            [(Figure.pawn, "a", 4), (Figure.bishop, "b", 7)],
+            [(Figure.rook, "e", 1), (Figure.knight, "d", 5)],
+            [(Figure.bishop, "g", 3), (Figure.king, "c", 8)],
+            [(Figure.pawn, "b", 5), (Figure.pawn, "b", 5)],
+            [(Figure.queen, "d", 3), (Figure.bishop, "c", 6)],
+            [(Figure.bishop, "f", 5), (Figure.pawn, "f", 5)],
+            [(Figure.rook, "e", 7), (Figure.bishop, "e", 7)],
+            // 19.c4 1-0
+        ]
+        
+        XCTAssertEqual(game.moves.count, moves.count)
+        
+        for (m_i, move) in moves.enumerated() {
+            let gameMove = game.moves[m_i]
+            XCTAssertEqual(gameMove.white.figure, move[0].0, "Move: \(m_i+1), Parsed: \(gameMove.white.figure), Test: \(move[0].0)")
+            XCTAssertEqual(gameMove.white.position.0, move[0].1)
+            XCTAssertEqual(gameMove.white.position.1, move[0].2)
+            XCTAssertEqual(gameMove.black.figure, move[1].0)
+            XCTAssertEqual(gameMove.black.position.0, move[1].1)
+            XCTAssertEqual(gameMove.black.position.1, move[1].2)
         }
     }
 
