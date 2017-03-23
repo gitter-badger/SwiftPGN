@@ -51,6 +51,7 @@ class Game {
     init(withPGNString pgnString: String) {
         self.parseMeta(fromPGNGameString: pgnString)
         self.parseMoves(fromPGNGameString: pgnString)
+        print("LOL")
     }
     
     //
@@ -133,31 +134,41 @@ class Game {
     }
     
     private func parseMove(fromString moveString: String) -> Move? {
-        var white: PositionedFigure?
-        var black: PositionedFigure?
+        var positionedFigures: [PositionedFigure] = []
         
-        for (i, match) in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern).enumerated() {
-            if match.lengthOfBytes(using: .utf8) >= 2 {
-                var step = match.replacingOccurrences(of: "\n", with: "")
-                if let horizontal = Int(String(step.characters.popLast()!)) {
-                    let vertical = String(step.characters.popLast()!)
-                    
-                    // TODO: Figure parsing
-                    var movedFigure = PositionedFigure(figure: .pawn, position: (vertical, horizontal))
-                    if i == 0 {
-                        white = movedFigure
-                    } else if i == 1 {
-                        black = movedFigure
-                    }
-                }
-            }
+        for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {
+            var step = match.replacingOccurrences(of: "\n", with: "")
+            
+            guard let horizontal = step.characters.popLast() else { continue }
+            guard let vertical = step.characters.popLast() else { continue }
+            
+            let position = (String(vertical), Int(String(horizontal))!)
+            
+            var figure: Figure = self.figure(fromMoveString: step)
+            
+            positionedFigures.append(PositionedFigure(figure: figure, position: position))
         }
         
-        if let white = white, let black = black {
-            return Move(white: white, black: black)
+        if positionedFigures.count == 2 {
+            return Move(white: positionedFigures[0], black: positionedFigures[1])
         }
         
         return nil
+    }
+    
+    private func figure(fromMoveString s: String) -> Figure {
+        if s.contains("K") {
+            return Figure.king
+        } else if s.contains("Q") {
+            return Figure.queen
+        } else if s.contains("R") {
+            return Figure.rook
+        } else if s.contains("B") {
+            return Figure.bishop
+        } else if s.contains("N") {
+            return Figure.knight
+        }
+        return .pawn
     }
     
 }
