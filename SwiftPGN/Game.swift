@@ -19,6 +19,7 @@ struct PositionedFigure {
 }
 
 struct Move {
+    var comment: String? = nil
     var white: PositionedFigure
     var black: PositionedFigure
 }
@@ -30,8 +31,9 @@ class Game {
     private let kMetaKeyPattern = "\\[[a-zA-Z]+(\\s|\\t)?"
     private let kMetaValuePattern = "\".+\""
     
-    private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]+\\s[a-zA-Z0-9]+(\\s)" // 1. e4 e5
+    private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]+\\+?\\s[a-zA-Z0-9]+\\+?\\s(\\{.+\\})?" // 1. e4 e5
     private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]" // Rxf7
+    private let kMoveCommentPattern = "\\{.+\\}"
 
     var event: String?
     var site: String?
@@ -134,15 +136,14 @@ class Game {
     
     private func parseMove(fromString moveString: String) -> Move? {
         // TODO: Parse source coordinates
-        // TODO: PArse O-O
-        // TODO: Comments support
+        // TODO: Castling
         // TODO: + support
         // TODO: Final move parsing
         
         var positionedFigures: [PositionedFigure] = []
         
         for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {
-            var step = match.replacingOccurrences(of: "\n", with: "")
+            var step = match.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
             
             guard let horizontal = step.characters.popLast() else { continue }
             guard let vertical = step.characters.popLast() else { continue }
@@ -154,8 +155,17 @@ class Game {
             positionedFigures.append(PositionedFigure(figure: figure, position: position))
         }
         
+        var comment: String? = nil
+        for match in try! moveString.findMatches(withPattern: self.kMoveCommentPattern) {
+            comment = match
+        }
+        
         if positionedFigures.count == 2 {
-            return Move(white: positionedFigures[0], black: positionedFigures[1])
+            var move = Move(comment: nil, white: positionedFigures[0], black: positionedFigures[1])
+            if let comment = comment {
+                move.comment = comment.replacingOccurrences(of: "{", with: "").replacingOccurrences(of: "}", with: "")
+            }
+            return move
         }
         
         return nil
