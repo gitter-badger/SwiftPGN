@@ -19,9 +19,9 @@ struct PositionedFigure {
 }
 
 struct Move {
-    var comment: String? = nil
+    var comment: String?
     var white: PositionedFigure
-    var black: PositionedFigure
+    var black: PositionedFigure?
 }
 
 
@@ -31,7 +31,8 @@ class Game {
     private let kMetaKeyPattern = "\\[[a-zA-Z]+(\\s|\\t)?"
     private let kMetaValuePattern = "\".+\""
     
-    private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]+\\+?\\s[a-zA-Z0-9]+\\+?\\s(\\{.+\\})?" // 1. e4 e5
+    private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]{2,}\\+?\\s([a-zA-Z0-9]{2,}\\+?\\s)?(\\{.+\\})?"
+    
     private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]" // Rxf7
     private let kMoveCommentPattern = "\\{.+\\}"
 
@@ -138,7 +139,7 @@ class Game {
         // TODO: Parse source coordinates
         // TODO: Castling
         // TODO: + support
-        // TODO: Final move parsing
+        // TODO: Final move parsing !!!!!
         
         var positionedFigures: [PositionedFigure] = []
         
@@ -160,8 +161,13 @@ class Game {
             comment = match
         }
         
-        if positionedFigures.count == 2 {
-            var move = Move(comment: nil, white: positionedFigures[0], black: positionedFigures[1])
+        if positionedFigures.count > 0 {
+            var move = Move(comment: nil, white: positionedFigures[0], black: nil)
+            
+            if positionedFigures.count > 1 {
+                move.black = positionedFigures[1]
+            }
+            
             if let comment = comment {
                 move.comment = comment.replacingOccurrences(of: "{", with: "").replacingOccurrences(of: "}", with: "")
             }
