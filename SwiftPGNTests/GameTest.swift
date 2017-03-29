@@ -62,6 +62,8 @@ class GameTest: XCTestCase {
                 XCTAssertEqual(gameMove.comment, "Каспаров встряхнул головой")
             }
         }
+        
+        XCTAssertEqual(game.result, "1-0")
     }
 
 }

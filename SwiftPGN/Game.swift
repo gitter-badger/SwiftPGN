@@ -32,6 +32,7 @@ class Game {
     private let kMetaValuePattern = "\".+\""
     
     private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]{2,}\\+?\\s([a-zA-Z0-9]{2,}\\+?\\s)?(\\{.+\\})?"
+    private let kResultPattern = "\\s(1-0|0-1|1\\/2-1\\/2)"
     
     private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]" // Rxf7
     private let kMoveCommentPattern = "\\{.+\\}"
@@ -54,6 +55,7 @@ class Game {
     init(withPGNString pgnString: String) {
         self.parseMeta(fromPGNGameString: pgnString)
         self.parseMoves(fromPGNGameString: pgnString)
+        self.parseResult(fromPGNGameString: pgnString)
     }
     
     //
@@ -190,6 +192,12 @@ class Game {
             return Figure.knight
         }
         return .pawn
+    }
+    
+    private func parseResult(fromPGNGameString pgnString: String) {
+        for match in try! pgnString.findMatches(withPattern: self.kResultPattern) {
+            self.result = match.replacingOccurrences(of: " ", with: "")
+        }
     }
     
 }
