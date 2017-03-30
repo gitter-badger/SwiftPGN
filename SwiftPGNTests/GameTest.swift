@@ -30,7 +30,7 @@ class GameTest: XCTestCase {
             [(Figure.bishop, "d", 3), (Figure.pawn, "e", 6)],
             [(Figure.knight, "f", 3), (Figure.pawn, "h", 6)],
             [(Figure.knight, "e", 6), (Figure.queen, "e", 7)],
-            // 9.O-O fxe6
+            [(Figure.kingsideCastling, "", 0), (Figure.pawn, "e", 6)], // 9.O-O fxe6
             [(Figure.bishop, "g", 6), (Figure.king, "d", 8)], //{Каспаров встряхнул головой}
             [(Figure.bishop, "f", 4), (Figure.pawn, "b", 5)],
             [(Figure.pawn, "a", 4), (Figure.bishop, "b", 7)],
@@ -58,7 +58,7 @@ class GameTest: XCTestCase {
                 XCTAssertEqual(blackMove.position.1, move[1].2)
             }
             
-            if m_i == 8 {
+            if m_i == 9 {
                 XCTAssertEqual(gameMove.white.isCheck, true)
                 XCTAssertEqual(gameMove.comment, "Каспаров встряхнул головой")
             }

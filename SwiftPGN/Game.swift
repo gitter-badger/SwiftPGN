@@ -10,7 +10,7 @@ import Foundation
 
 
 enum Figure {
-    case king, queen, rook, bishop, knight, pawn
+    case king, queen, rook, bishop, knight, pawn, queensideCastling, kingsideCastling
 }
 
 struct PositionedFigure {
@@ -32,10 +32,10 @@ class Game {
     private let kMetaKeyPattern = "\\[[a-zA-Z]+(\\s|\\t)?"
     private let kMetaValuePattern = "\".+\""
     
-    private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]{2,}\\+?\\s([a-zA-Z0-9]{2,}\\+?\\s)?(\\{.+\\})?"
+    private let kMovePattern = "\\d+\\.\\s*(([a-zA-Z0-9]{2,})|(O-O)|(O-O-O))\\+?\\s(([a-zA-Z0-9]{2,})|(O-O)|(O-O-O))?(\\s\\{.+\\})?"
     private let kResultPattern = "\\s(1-0|0-1|1\\/2-1\\/2)"
     
-    private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?" // Rxf7
+    private let kPositionedFigurePattern = "([KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?)|(O-O)|(O-O-O)" // Rxf7
     private let kMoveCommentPattern = "\\{.+\\}"
 
     var event: String?
@@ -140,14 +140,19 @@ class Game {
     
     private func parseMove(fromString moveString: String) -> Move? {
         // TODO: Parse source coordinates
-        // TODO: Castling
-        // TODO: + support
-        // TODO: Final move parsing !!!!!
         
         var positionedFigures: [PositionedFigure] = []
         
         for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {
             var step = match.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
+            
+            if step == "O-O" {
+                positionedFigures.append(PositionedFigure(figure: Figure.kingsideCastling, position: ("", 0), isCheck: false))
+                continue
+            } else if step == "O-O-O" {
+                positionedFigures.append(PositionedFigure(figure: Figure.queensideCastling, position: ("", 0), isCheck: false))
+                continue
+            }
             
             var isCheck = false
             if step.contains("+") {
