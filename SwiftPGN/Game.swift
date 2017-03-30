@@ -36,7 +36,7 @@ class Game {
     private let kMovePattern = "\\d+\\.\\s*(([a-zA-Z0-9]{2,})|(O-O)|(O-O-O))\\+?\\s(([a-zA-Z0-9]{2,})|(O-O)|(O-O-O))?(\\s\\{.+\\})?"
     private let kResultPattern = "\\s(1-0|0-1|1\\/2-1\\/2)"
     
-    private let kPositionedFigurePattern = "([KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?)|(O-O)|(O-O-O)" // Rxf7
+    private let kPositionedFigurePattern = "([KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?)|(O-O)|(O-O-O)"
     private let kMoveCommentPattern = "\\{.+\\}"
 
     var event: String?
