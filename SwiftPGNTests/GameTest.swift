@@ -58,9 +58,22 @@ class GameTest: XCTestCase {
                 XCTAssertEqual(blackMove.position.1, move[1].2)
             }
             
-            if m_i == 9 {
+            if m_i == 2 {
+                XCTAssertEqual(gameMove.black!.sourcePosition.0, "d")
+            } else if m_i == 4 {
+                XCTAssertEqual(gameMove.black!.sourcePosition.0, "g")
+            } else if m_i == 6 {
+                XCTAssertEqual(gameMove.white.sourcePosition.1, 1)
+            } else if m_i == 8 {
+                XCTAssertEqual(gameMove.black!.sourcePosition.0, "f")
+            } else if m_i == 9 {
                 XCTAssertEqual(gameMove.white.isCheck, true)
                 XCTAssertEqual(gameMove.comment, "Каспаров встряхнул головой")
+            } else if m_i == 14 {
+                XCTAssertEqual(gameMove.white.sourcePosition.0, "a")
+                XCTAssertEqual(gameMove.black!.sourcePosition.0, "c")
+            } else if m_i == 16 {
+                XCTAssertEqual(gameMove.black!.sourcePosition.0, "e")
             }
         }
         

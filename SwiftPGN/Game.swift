@@ -16,6 +16,7 @@ enum Figure {
 struct PositionedFigure {
     var figure: Figure
     var position: (String, Int)
+    var sourcePosition: (String?, Int?)
     var isCheck = false
 }
 
@@ -139,18 +140,16 @@ class Game {
     }
     
     private func parseMove(fromString moveString: String) -> Move? {
-        // TODO: Parse source coordinates
-        
         var positionedFigures: [PositionedFigure] = []
         
         for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {
             var step = match.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
             
             if step == "O-O" {
-                positionedFigures.append(PositionedFigure(figure: Figure.kingsideCastling, position: ("", 0), isCheck: false))
+                positionedFigures.append(PositionedFigure(figure: Figure.kingsideCastling, position: ("", 0), sourcePosition: (nil, nil), isCheck: false))
                 continue
             } else if step == "O-O-O" {
-                positionedFigures.append(PositionedFigure(figure: Figure.queensideCastling, position: ("", 0), isCheck: false))
+                positionedFigures.append(PositionedFigure(figure: Figure.queensideCastling, position: ("", 0), sourcePosition: (nil, nil),isCheck: false))
                 continue
             }
             
@@ -166,7 +165,17 @@ class Game {
             let position = (String(vertical), Int(String(horizontal))!)
             
             let figure: Figure = self.figure(fromMoveString: step)
-            let positionedFigure = PositionedFigure(figure: figure, position: position, isCheck: isCheck)
+            
+            var sourcePosition: (String?, Int?) = (nil, nil)
+            while let c = step.characters.popLast() {
+                if "abcdefgh".contains(String(c)) {
+                    sourcePosition.0 = String(c)
+                } else if "12345678".contains(String(c)) {
+                    sourcePosition.1 = Int(String(c))
+                }
+            }
+            
+            let positionedFigure = PositionedFigure(figure: figure, position: position, sourcePosition: sourcePosition, isCheck: isCheck)
             
             positionedFigures.append(positionedFigure)
         }
