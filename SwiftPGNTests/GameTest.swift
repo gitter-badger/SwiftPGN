@@ -59,6 +59,7 @@ class GameTest: XCTestCase {
             }
             
             if m_i == 8 {
+                XCTAssertEqual(gameMove.white.isCheck, true)
                 XCTAssertEqual(gameMove.comment, "Каспаров встряхнул головой")
             }
         }

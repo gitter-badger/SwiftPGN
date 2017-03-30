@@ -16,6 +16,7 @@ enum Figure {
 struct PositionedFigure {
     var figure: Figure
     var position: (String, Int)
+    var isCheck = false
 }
 
 struct Move {
@@ -34,7 +35,7 @@ class Game {
     private let kMovePattern = "\\d+\\.\\s*[a-zA-Z0-9]{2,}\\+?\\s([a-zA-Z0-9]{2,}\\+?\\s)?(\\{.+\\})?"
     private let kResultPattern = "\\s(1-0|0-1|1\\/2-1\\/2)"
     
-    private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]" // Rxf7
+    private let kPositionedFigurePattern = "[KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?" // Rxf7
     private let kMoveCommentPattern = "\\{.+\\}"
 
     var event: String?
@@ -148,14 +149,21 @@ class Game {
         for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {
             var step = match.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
             
+            var isCheck = false
+            if step.contains("+") {
+                let _ = step.characters.popLast()
+                isCheck = true
+            }
+            
             guard let horizontal = step.characters.popLast() else { continue }
             guard let vertical = step.characters.popLast() else { continue }
             
             let position = (String(vertical), Int(String(horizontal))!)
             
-            var figure: Figure = self.figure(fromMoveString: step)
+            let figure: Figure = self.figure(fromMoveString: step)
+            let positionedFigure = PositionedFigure(figure: figure, position: position, isCheck: isCheck)
             
-            positionedFigures.append(PositionedFigure(figure: figure, position: position))
+            positionedFigures.append(positionedFigure)
         }
         
         var comment: String? = nil
