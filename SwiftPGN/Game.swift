@@ -9,24 +9,6 @@
 import Foundation
 
 
-enum Figure {
-    case king, queen, rook, bishop, knight, pawn, queensideCastling, kingsideCastling
-}
-
-struct PositionedFigure {
-    var figure: Figure
-    var position: (String, Int)
-    var sourcePosition: (String?, Int?)
-    var isCheck = false
-}
-
-struct Move {
-    var comment: String?
-    var white: PositionedFigure
-    var black: PositionedFigure?
-}
-
-
 class Game {
     
     private let kMetaPattern = "\\[.+\\]"
@@ -36,7 +18,7 @@ class Game {
     private let kMovePattern = "\\d+\\.\\s*(([a-zA-Z0-9]{2,})|(O-O)|(O-O-O))\\+?\\s(([a-zA-Z0-9]{2,})|(O-O)|(O-O-O))?(\\s\\{.+\\})?"
     private let kResultPattern = "\\s(1-0|0-1|1\\/2-1\\/2)"
     
-    private let kPositionedFigurePattern = "([KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?)|(O-O)|(O-O-O)"
+    private let kPositionedPiecePattern = "([KQRBN]?[a-h1-8]?x?[a-h][1-8]\\+?)|(O-O)|(O-O-O)"
     private let kMoveCommentPattern = "\\{.+\\}"
 
     var event: String?
@@ -140,16 +122,16 @@ class Game {
     }
     
     private func parseMove(fromString moveString: String) -> Move? {
-        var positionedFigures: [PositionedFigure] = []
+        var positionedFigures: [PieceMove] = []
         
-        for match in try! moveString.findMatches(withPattern: self.kPositionedFigurePattern) {
+        for match in try! moveString.findMatches(withPattern: self.kPositionedPiecePattern) {
             var step = match.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
             
             if step == "O-O" {
-                positionedFigures.append(PositionedFigure(figure: Figure.kingsideCastling, position: ("", 0), sourcePosition: (nil, nil), isCheck: false))
+                positionedFigures.append(PieceMove(withPosition: ("", 0), ofPiece: .kingsideCastling))
                 continue
             } else if step == "O-O-O" {
-                positionedFigures.append(PositionedFigure(figure: Figure.queensideCastling, position: ("", 0), sourcePosition: (nil, nil),isCheck: false))
+                positionedFigures.append(PieceMove(withPosition: ("", 0), ofPiece: .queensideCastling))
                 continue
             }
             
@@ -164,7 +146,7 @@ class Game {
             
             let position = (String(vertical), Int(String(horizontal))!)
             
-            let figure: Figure = self.figure(fromMoveString: step)
+            let figure: Piece = self.figure(fromMoveString: step)
             
             var sourcePosition: (String?, Int?) = (nil, nil)
             while let c = step.characters.popLast() {
@@ -175,7 +157,9 @@ class Game {
                 }
             }
             
-            let positionedFigure = PositionedFigure(figure: figure, position: position, sourcePosition: sourcePosition, isCheck: isCheck)
+            var positionedFigure = PieceMove(withPosition: position, ofPiece: figure)
+            positionedFigure.sourcePosition = sourcePosition
+            positionedFigure.isCheck = isCheck
             
             positionedFigures.append(positionedFigure)
         }
@@ -186,7 +170,7 @@ class Game {
         }
         
         if positionedFigures.count > 0 {
-            var move = Move(comment: nil, white: positionedFigures[0], black: nil)
+            var move = Move(withWhite: positionedFigures[0])
             
             if positionedFigures.count > 1 {
                 move.black = positionedFigures[1]
@@ -201,17 +185,17 @@ class Game {
         return nil
     }
     
-    private func figure(fromMoveString s: String) -> Figure {
+    private func figure(fromMoveString s: String) -> Piece {
         if s.contains("K") {
-            return Figure.king
+            return Piece.king
         } else if s.contains("Q") {
-            return Figure.queen
+            return Piece.queen
         } else if s.contains("R") {
-            return Figure.rook
+            return Piece.rook
         } else if s.contains("B") {
-            return Figure.bishop
+            return Piece.bishop
         } else if s.contains("N") {
-            return Figure.knight
+            return Piece.knight
         }
         return .pawn
     }

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3256DC581E8384D700BD5FF5 /* one_game.pgn in Resources */ = {isa = PBXBuildFile; fileRef = 3256DC571E8384D700BD5FF5 /* one_game.pgn */; };
+		32D749A51E8DD16300169385 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D749A41E8DD16300169385 /* Move.swift */; };
+		32D749A71E8DD26400169385 /* PieceMove.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D749A61E8DD26400169385 /* PieceMove.swift */; };
+		32D749A91E8DD3FC00169385 /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D749A81E8DD3FC00169385 /* Piece.swift */; };
 		32F40ADA1E81336600A3F818 /* SwiftPGN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F40AD01E81336600A3F818 /* SwiftPGN.framework */; };
 		32F40ADF1E81336600A3F818 /* SwiftPGNTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F40ADE1E81336600A3F818 /* SwiftPGNTests.swift */; };
 		32F40AE11E81336600A3F818 /* SwiftPGN.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F40AD31E81336600A3F818 /* SwiftPGN.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,6 +33,9 @@
 
 /* Begin PBXFileReference section */
 		3256DC571E8384D700BD5FF5 /* one_game.pgn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = one_game.pgn; sourceTree = "<group>"; };
+		32D749A41E8DD16300169385 /* Move.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
+		32D749A61E8DD26400169385 /* PieceMove.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PieceMove.swift; sourceTree = "<group>"; };
+		32D749A81E8DD3FC00169385 /* Piece.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Piece.swift; sourceTree = "<group>"; };
 		32F40AD01E81336600A3F818 /* SwiftPGN.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftPGN.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32F40AD31E81336600A3F818 /* SwiftPGN.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftPGN.h; sourceTree = "<group>"; };
 		32F40AD41E81336600A3F818 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -86,6 +92,9 @@
 			children = (
 				32F40AD31E81336600A3F818 /* SwiftPGN.h */,
 				32F40AD41E81336600A3F818 /* Info.plist */,
+				32D749A81E8DD3FC00169385 /* Piece.swift */,
+				32D749A61E8DD26400169385 /* PieceMove.swift */,
+				32D749A41E8DD16300169385 /* Move.swift */,
 				32F40AEA1E81338300A3F818 /* Game.swift */,
 				32F40AEE1E81465600A3F818 /* PGNFile.swift */,
 				32F40AF51E818D9D00A3F818 /* String+Regex.swift */,
@@ -220,6 +229,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32D749A71E8DD26400169385 /* PieceMove.swift in Sources */,
+				32D749A51E8DD16300169385 /* Move.swift in Sources */,
+				32D749A91E8DD3FC00169385 /* Piece.swift in Sources */,
 				32F40AEB1E81338300A3F818 /* Game.swift in Sources */,
 				32F40AEF1E81465600A3F818 /* PGNFile.swift in Sources */,
 				32F40AF61E818D9D00A3F818 /* String+Regex.swift in Sources */,
